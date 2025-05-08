@@ -1,7 +1,7 @@
-= WildFly Crawler
+= Link Verifier
 
 This is a simple tool intended to help identify broken links created when migrating from one static site
-generator (SSG) to another. It was born from the effort to migrate various https://wildfly.org[WildFly] sites (thus the name) from https://jekyllrb.com/[Jekyll] to https://iamroq.com[Roq].
+generator (SSG) to another. It was born from the effort to migrate various https://wildfly.org[WildFly] sites from https://jekyllrb.com/[Jekyll] to https://iamroq.com[Roq].
 
 It's very simple: it crawls one site, building a list of internal links, attempts to massage those links to match your local development site, then verifies that link works. If it doesn't, it prints a message. Once you have that list, it will be up to you to clean up any valid broken links.
 
@@ -14,18 +14,27 @@ Building the tool is very simple:
 $ mvn package
 ----
 
-Once built, you can run the tool using `target/crawler.jar`.
+Once built, you can run the tool using `target/link-verifier.jar`.
 
 == Usage
 
 There are only a handful of commandline options:
 
 -----
-Usage: crawl [-w] [-f=<linkFile>] [-l=<local>] [-r=<remote>] [-i=<ignore>]...
-Validates that links are resolvable.
+$ java -jar target/link-verifier.jar -h
+Usage: link-verifier [-chw] [-f=<linkFile>] [-l=<local>] [-r=<remote>]
+                     [-a=<aliases>]... [-i=<ignore>]...
+Validates that links generated on a remote site are resolvable on the local dev
+site.
+  -a, --alias=<aliases>   An alias the site may use (e.g., https://www.example.
+                            com -> https://example.com)
+  -c, --check, --verify   Whether to verify a remote URL before verifying
+                            locally. This avoids false positives from broken
+                            links on the remote site.
   -f, --link-file=<linkFile>
                           A file containing links to check
-  -i, --ignore=<ignore>   Paths to ignore
+  -h, --help              Display this help message
+  -i, --ignore=<ignore>   Paths to ignore. Can be repeated for multiple paths.
   -l, --local=<local>     The local site to check
   -r, --remote=<remote>   The remote site to crawl
   -w, --walk              Whether to walk the remote site. Once the site is
@@ -38,15 +47,16 @@ To crawl the remote site, you _must_ specify `-w`. This off-by-default option al
 == Example
 
 -----
-$ java -jar target/crawler.jar \
+$ java -jar target/link-verifier.jar \
     -w \
-    --remote https://wildfly.org \
+    --verify \
+    --remote https://www.wildfly.org \
+    --alias https://wildfly.org \
     --local http://localhost:8080 \
-    --ignore documentation \
-    --ignore images \
     --link-file wildfly.org.txt
 ...
-Found 266 good links and 0 invalid links.
+The URL https://www.wildfly.org/assets/css/main.css from the original site was not found in the local site: http://localhost:8080/assets/css/main.css
+Found 472 good links and 1 invalid links.
 -----
 
 == Feedback Welcome

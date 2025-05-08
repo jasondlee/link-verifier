@@ -1,4 +1,4 @@
-package org.wildfly.extras.crawler;
+package com.steeplesoft.crawler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,10 +13,11 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class WildFlyCrawler extends WebCrawler {
-    private final Set<WebURL> allLinks = new HashSet<>();
-    private final List<String> ignore = new ArrayList<>();
+public class SiteCrawler extends WebCrawler {
     private String remote;
+    private final Set<WebURL> allLinks = new HashSet<>();
+    private final List<String> aliases = new ArrayList<>();
+    private final List<String> ignore = new ArrayList<>();
 
     private final static Pattern ACCEPT_FILTER = Pattern.compile(".*(\\.html|\\/)$");
     private final static Pattern IGNORE_FILTER = Pattern.compile(".*(\\.(jbig2|tiff|JPEG2000|gif|jpg"
@@ -25,10 +26,14 @@ public class WildFlyCrawler extends WebCrawler {
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String href = url.getURL().toLowerCase();
-        boolean goodSuffix = ACCEPT_FILTER.matcher(href).matches() || href.endsWith("/");
-        boolean goodPath = href.startsWith(remote) &&
+        boolean goodSuffix = true; //ACCEPT_FILTER.matcher(href).matches() || href.endsWith("/");
+        boolean goodPath = (href.startsWith(remote) ||
+            aliases.stream().anyMatch(href::startsWith)) &&
             ignore.stream().noneMatch(path -> href.startsWith(remote + path));
-        return goodSuffix && goodPath;
+        if (goodPath) {
+            System.out.println("Found a good URL (" + href + ") in " + referringPage.getWebURL().getURL());
+        }
+        return goodPath;
     }
 
     @Override
@@ -47,11 +52,20 @@ public class WildFlyCrawler extends WebCrawler {
     }
 
     public void setRemote(String remote) {
-        this.remote = remote + (remote.endsWith("/") ? "" : "/");
+        this.remote = remote.endsWith("/") ? remote : remote + "/";
+    }
+
+    public void setAliases(String[] aliases) {
+        this.aliases.addAll(Arrays.stream(aliases)
+            .map(alias -> alias.endsWith("/") ? alias : alias + "/")
+            .toList()
+        );
     }
 
     public void ignore(String[] paths) {
-        ignore.addAll(Arrays.asList(paths));
+        if (paths != null) {
+            ignore.addAll(Arrays.asList(paths));
+        }
     }
 
     public Set<WebURL> getAllLinks() {

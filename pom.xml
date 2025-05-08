@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wildfly</groupId>
+    <groupId>com.steeplesoft</groupId>
     <artifactId>crawler</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -84,7 +84,7 @@
     </dependencies>
 
     <build>
-        <finalName>crawler</finalName>
+        <finalName>link-verifier</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +94,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.wildfly.extras.crawler.WildFlyCrawlerCommand</mainClass>
+                            <mainClass>com.steeplesoft.crawler.LinkVerifierCommand</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
