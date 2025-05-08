@@ -35,6 +35,20 @@ Validates that links are resolvable.
 
 To crawl the remote site, you _must_ specify `-w`. This off-by-default option allows us to run the tool to crawl the remote site once, then run it repeatedly to use the generated list of links to verify our local site without causing excessive traffic to the production site. It's probably a premature optimization, but it seemed prudent. 8-)
 
+== Example
+
+-----
+$ java -jar target/crawler-1.0-SNAPSHOT.jar \
+    -w \
+    --remote https://wildfly.org \
+    --local http://localhost:8080 \
+    --ignore documentation \
+    --ignore images \
+    --link-file wildfly.org.txt
+...
+Found 266 good links and 0 invalid links.
+-----
+
 == Feedback Welcome
 
 This is a pretty quick-and-dirty tool I cobbled together, but perhaps it will help someone else. If you do find it useful, but need some changes, please feel free to file a pull request and we can talk it over.
