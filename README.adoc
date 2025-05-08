@@ -1,0 +1,42 @@
+= WildFly Crawler
+
+This is a simple tool intended to help identify broken links created when migrating from one static site
+generator (SSG) to another. It was born from the effort to migrate various https://wildfly.org[WildFly] sites (thus the name) from https://jekyllrb.com/[Jekyll] to https://iamroq.com[Roq].
+
+It's very simple: it crawls one site, building a list of internal links, attempts to massage those links to match your local development site, then verifies that link works. If it doesn't, it prints a message. Once you have that list, it will be up to you to clean up any valid broken links.
+
+== Building
+
+Building the tool is very simple:
+
+[source]
+----
+$ mvn package
+----
+
+Once built, you can run the tool using `target/crawler.jar`.
+
+== Usage
+
+There are only a handful of commandline options:
+
+-----
+Usage: crawl [-w] [-f=<linkFile>] [-l=<local>] [-r=<remote>] [-i=<ignore>]...
+Validates that links are resolvable.
+  -f, --link-file=<linkFile>
+                          A file containing links to check
+  -i, --ignore=<ignore>   Paths to ignore
+  -l, --local=<local>     The local site to check
+  -r, --remote=<remote>   The remote site to crawl
+  -w, --walk              Whether to walk the remote site. Once the site is
+                            walked, --link-file can be used to avoid excessive
+                            traffic.
+-----
+
+To crawl the remote site, you _must_ specify `-w`. This off-by-default option allows us to run the tool to crawl the remote site once, then run it repeatedly to use the generated list of links to verify our local site without causing excessive traffic to the production site. It's probably a premature optimization, but it seemed prudent. 8-)
+
+== Feedback Welcome
+
+This is a pretty quick-and-dirty tool I cobbled together, but perhaps it will help someone else. If you do find it useful, but need some changes, please feel free to file a pull request and we can talk it over.
+
+Enjoy!
