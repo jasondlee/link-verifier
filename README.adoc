@@ -38,7 +38,7 @@ To crawl the remote site, you _must_ specify `-w`. This off-by-default option al
 == Example
 
 -----
-$ java -jar target/crawler-1.0-SNAPSHOT.jar \
+$ java -jar target/crawler.jar \
     -w \
     --remote https://wildfly.org \
     --local http://localhost:8080 \
