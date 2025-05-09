@@ -60,10 +60,11 @@ public class LinkVerifierCommand implements Callable<Integer>  {
         // Fix up remote, local, and aliases to the ending / is consistent and predictable
         remote = remote.endsWith("/") ? remote : remote + "/";
         local = local.endsWith("/") ? local : local + "/";
-        for (int i = 0; i < aliases.length; i++) {
-            aliases[i] = aliases[i].endsWith("/") ? aliases[i] : aliases[i] + "/";
+        if (aliases != null) {
+            for (int i = 0; i < aliases.length; i++) {
+                aliases[i] = aliases[i].endsWith("/") ? aliases[i] : aliases[i] + "/";
+            }
         }
-
 
         if (walk) {
             crawlRemoteSite();
@@ -144,9 +145,11 @@ public class LinkVerifierCommand implements Callable<Integer>  {
 
     private URI transformLink(String link) throws URISyntaxException {
         String transformed = link.replace(remote, local);
-        String alias = Arrays.stream(aliases).filter(transformed::startsWith).findFirst().orElse(null);
-        if (alias != null) {
-            transformed = transformed.replace(alias, local);
+        if (aliases != null && aliases.length > 0) {
+            String alias = Arrays.stream(aliases).filter(transformed::startsWith).findFirst().orElse(null);
+            if (alias != null) {
+                transformed = transformed.replace(alias, local);
+            }
         }
         return new URI(transformed);
     }

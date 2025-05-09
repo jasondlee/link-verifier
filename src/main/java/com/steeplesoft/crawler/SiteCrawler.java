@@ -56,10 +56,12 @@ public class SiteCrawler extends WebCrawler {
     }
 
     public void setAliases(String[] aliases) {
-        this.aliases.addAll(Arrays.stream(aliases)
-            .map(alias -> alias.endsWith("/") ? alias : alias + "/")
-            .toList()
-        );
+        if (aliases != null) {
+            this.aliases.addAll(Arrays.stream(aliases)
+                .map(alias -> alias.endsWith("/") ? alias : alias + "/")
+                .toList()
+            );
+        }
     }
 
     public void ignore(String[] paths) {
